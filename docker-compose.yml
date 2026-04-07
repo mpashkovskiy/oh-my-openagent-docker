@@ -1,0 +1,11 @@
+services:
+  openagent:
+    build: .
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./workspace:/workspace
+      - ${HOME}/.config/opencode:/root/.config/opencode
+      - ${HOME}/.local/share/opencode:/root/.local/share/opencode
+      - ${HOME}/.local/state/opencode:/root/.local/state/opencode
+      - /var/run/docker.sock:/var/run/docker.sock
