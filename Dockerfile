@@ -52,7 +52,10 @@ RUN apk add --no-cache \
     gopls \
     py3-pip \
     rust-analyzer \
-    && npm install -g typescript-language-server typescript vscode-langservers-extracted \
+    python3 \
+    make \
+    g++ \
+    && npm install -g typescript-language-server typescript vscode-langservers-extracted @grinev/opencode-telegram-bot \
     && pip install --break-system-packages pyright
 
 COPY --from=installer /root/.config/opencode /root/.config/opencode

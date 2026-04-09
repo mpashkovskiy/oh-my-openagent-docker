@@ -36,20 +36,48 @@ Select **GitHub** when prompted and complete the device code flow in your browse
 ### 4. Run
 
 ```bash
-docker run -it \
-  -v $(pwd):/workspace \
-  -v ~/.config/opencode:/root/.config/opencode \
-  -v ~/.local/share/opencode:/root/.local/share/opencode \
-  -v ~/.local/state/opencode:/root/.local/state/opencode \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  oh-my-openagent
+docker compose up -d openagent
 ```
 
-Or with Docker Compose:
+This starts `opencode serve` (headless server) and attaches a TUI to it.
+
+### 5. Run with Telegram (optional)
 
 ```bash
-docker compose run openagent
+docker compose --profile telegram up -d
 ```
+
+Adds the Telegram bot alongside the server and TUI. See [Telegram Access](#telegram-access-opencode-telegram-bot) for setup.
+
+### Stopping
+
+```bash
+docker compose down
+```
+
+## Telegram Access (opencode-telegram-bot)
+
+The image includes [opencode-telegram-bot](https://github.com/grinev/opencode-telegram-bot) — a Telegram bot that lets you interact with OpenCode from your phone or any device via Telegram.
+
+### Setup
+
+1. Create a bot with [@BotFather](https://t.me/BotFather) on Telegram and copy the token
+2. Get your Telegram user ID from [@userinfobot](https://t.me/userinfobot)
+3. Run the config wizard (one-time):
+
+```bash
+docker compose run opencode-telegram opencode-telegram config
+```
+
+The configuration is saved to `~/.config/opencode-telegram-bot/.env` on your host.
+
+### Usage
+
+```bash
+docker compose --profile telegram up
+```
+
+Both the TUI (`opencode attach`) and the Telegram bot connect to the same `opencode serve` instance, so you can interact from either the terminal or Telegram simultaneously. See the [opencode-telegram-bot README](https://github.com/grinev/opencode-telegram-bot) for the full command reference.
 
 ## Volume Mounts
 
@@ -58,6 +86,7 @@ docker compose run openagent
 | `~/.config/opencode` | `/root/.config/opencode` | Plugin config, model assignments |
 | `~/.local/share/opencode` | `/root/.local/share/opencode` | Auth credentials (`auth.json`), session DB (`opencode.db`), logs |
 | `~/.local/state/opencode` | `/root/.local/state/opencode` | Plugin metadata, lock files, model state |
+| `~/.config/opencode-telegram-bot` | `/root/.config/opencode-telegram-bot` | Telegram bot config (`.env`) |
 | `$(pwd)` or `./workspace` | `/workspace` | Your project directory |
 | `/var/run/docker.sock` | `/var/run/docker.sock` | Docker-in-Docker access |
 

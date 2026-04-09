@@ -9,6 +9,11 @@ if [ "$1" = "auth" ] && [ "$2" = "login" ]; then
     exec opencode auth login
 fi
 
+if [ "$1" = "opencode-telegram" ]; then
+    shift
+    exec opencode-telegram "$@"
+fi
+
 if [ ! -d "$OPENCODE_CONFIG_DIR" ] || [ -z "$(ls -A "$OPENCODE_CONFIG_DIR" 2>/dev/null)" ]; then
     echo "ERROR: No OpenCode config found at $OPENCODE_CONFIG_DIR"
     echo ""
