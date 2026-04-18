@@ -25,21 +25,25 @@ mkdir -p ~/.config/opencode ~/.local/share/opencode ~/.local/state/opencode
 
 ```bash
 docker run -it \
-  -v ~/.config/opencode:/root/.config/opencode \
   -v ~/.local/share/opencode:/root/.local/share/opencode \
   -v ~/.local/state/opencode:/root/.local/state/opencode \
   oh-my-openagent auth login
 ```
 
-Select **GitHub** when prompted and complete the device code flow in your browser. This is a one-time step — credentials persist on your host.
+Select **GitHub Copilot** when prompted and complete the device code flow in your browser. This is a one-time step — credentials persist on your host.
 
 ### 4. Run
 
-```bash
-docker compose up -d openagent
-```
+Navigate to the directory with your project and run:
 
-This starts `opencode serve` (headless server) and attaches a TUI to it.
+```bash
+docker run -it \
+  -v ~/.local/share/opencode:/root/.local/share/opencode \
+  -v ~/.local/state/opencode:/root/.local/state/opencode \
+  -v /var/run/docker.sock:/var/run/docker.sock
+  -v .:/workspace \
+  oh-my-openagent opencode
+```
 
 ### 5. Run with Telegram (optional)
 
