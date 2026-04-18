@@ -45,6 +45,19 @@ docker run -it \
   oh-my-openagent opencode
 ```
 
+Or use following command to use it in the browser (user/password: opencode/Qw2e3r4)
+
+```bash
+docker run -d \
+  -e OPENCODE_SERVER_PASSWORD=Qw2e3r4 \
+  --network host \
+  -v ~/.local/share/opencode:/root/.local/share/opencode \
+  -v ~/.local/state/opencode:/root/.local/state/opencode \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v .:/workspace \
+  oh-my-openagent opencode web --hostname 0.0.0.0
+```
+
 ### 5. Run with Telegram (optional)
 
 ```bash
