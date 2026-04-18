@@ -21,9 +21,11 @@
 # ---------------------------------------------------------------------------
 # Stage 1 - Install oh-my-openagent via Bun
 # ---------------------------------------------------------------------------
-FROM node:22-alpine AS installer
+FROM node:22-slim AS installer
 
-RUN apk add --no-cache curl bash git \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl bash git ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
     && npm install -g bun
 
 RUN curl -fsSL https://opencode.ai/install | bash
@@ -38,25 +40,28 @@ RUN bunx oh-my-opencode install --no-tui \
 # ---------------------------------------------------------------------------
 # Stage 2 - Minimal runtime image
 # ---------------------------------------------------------------------------
-FROM node:22-alpine
+FROM node:22-slim
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     git \
     ca-certificates \
     curl \
-    github-cli \
-    docker-cli \
-    clang-extra-tools \
-    go \
+    gh \
+    docker.io \
+    clang-tools \
+    golang \
     gopls \
-    py3-pip \
-    rust-analyzer \
+    python3-pip \
     python3 \
     make \
     g++ \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --component rust-analyzer \
     && npm install -g typescript-language-server typescript vscode-langservers-extracted @grinev/opencode-telegram-bot \
     && pip install --break-system-packages pyright
+
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 COPY --from=installer /root/.config/opencode /root/.config/opencode
 COPY --from=installer /root/.opencode /root/.opencode
