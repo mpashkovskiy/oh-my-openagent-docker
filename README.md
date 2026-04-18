@@ -40,7 +40,7 @@ Navigate to the directory with your project and run:
 docker run -it \
   -v ~/.local/share/opencode:/root/.local/share/opencode \
   -v ~/.local/state/opencode:/root/.local/state/opencode \
-  -v /var/run/docker.sock:/var/run/docker.sock
+  -v /var/run/docker.sock:/var/run/docker.sock \
   -v .:/workspace \
   oh-my-openagent opencode
 ```
