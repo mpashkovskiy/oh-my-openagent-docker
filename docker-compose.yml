@@ -1,8 +1,10 @@
 services:
-  opencode-serve:
+  opencode-web:
     build: .
-    command: ["opencode", "serve", "--hostname", "0.0.0.0", "--port", "4096"]
-    profiles: [telegram]
+    command: ["opencode", "web", "--hostname", "0.0.0.0", "--port", "4096"]
+    environment:
+      - OPENCODE_SERVER_PASSWORD=Qw2e3r4
+    network_mode: host
     volumes:
       - ../:/workspace
       - ~/.local/share/opencode:/root/.local/share/opencode
@@ -13,10 +15,12 @@ services:
     build: .
     command: ["opencode-telegram", "start"]
     environment:
-      - OPENCODE_API_URL=http://opencode-serve:4096
+      - OPENCODE_API_URL=http://0.0.0.0:4096
+      - OPENCODE_SERVER_PASSWORD=Qw2e3r4
     depends_on:
-      - opencode-serve
+      - opencode-web
     profiles: [telegram]
+    network_mode: host
     volumes:
       - ~/.config/opencode:/root/.config/opencode
       - ~/.config/opencode-telegram-bot:/root/.config/opencode-telegram-bot

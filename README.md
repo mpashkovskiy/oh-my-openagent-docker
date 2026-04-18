@@ -48,7 +48,8 @@ docker run -it \
 Or use following command to use it in the browser (user/password: opencode/Qw2e3r4)
 
 ```bash
-docker run -d \
+docker run \
+  -d \
   -e OPENCODE_SERVER_PASSWORD=Qw2e3r4 \
   --network host \
   -v ~/.local/share/opencode:/root/.local/share/opencode \
@@ -64,7 +65,7 @@ docker run -d \
 docker compose --profile telegram up -d
 ```
 
-Adds the Telegram bot alongside the server and TUI. See [Telegram Access](#telegram-access-opencode-telegram-bot) for setup.
+Adds the Telegram bot alongside the server. See [Telegram Access](#telegram-access-opencode-telegram-bot) for setup.
 
 ### Stopping
 
