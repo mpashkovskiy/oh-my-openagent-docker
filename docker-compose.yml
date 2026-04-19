@@ -11,16 +11,49 @@ services:
       - ~/.local/state/opencode:/root/.local/state/opencode
       - /var/run/docker.sock:/var/run/docker.sock
 
+  whisper:
+    image: ghcr.io/speaches-ai/speaches:latest-cpu
+    restart: unless-stopped
+    environment:
+      WHISPER__INFERENCE_DEVICE: cpu
+      WHISPER__COMPUTE_TYPE: int8
+      STT_MODEL_TTL: "-1"
+      ENABLE_UI: "false"
+      LOG_LEVEL: info
+    user: root
+    command: sh -c "uvicorn --factory speaches.main:create_app & PID=$$!; until curl -sf http://127.0.0.1:8000/health >/dev/null 2>&1; do sleep 2; done; curl -sf -X POST http://127.0.0.1:8000/v1/models/Systran/faster-whisper-base; wait $$PID"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8000/v1/models/Systran/faster-whisper-base"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 30s
+    profiles: [telegram]
+    network_mode: host
+    volumes:
+      - whisper-cache:/home/ubuntu/.cache/huggingface/hub
+
   opencode-telegram:
     build: .
     command: ["opencode-telegram", "start"]
     environment:
       - OPENCODE_API_URL=http://0.0.0.0:4096
       - OPENCODE_SERVER_PASSWORD=Qw2e3r4
+      - OPENCODE_MODEL_PROVIDER=github-copilot
+      - OPENCODE_MODEL_ID=claude-opus-4.6
+      - STT_API_URL=http://127.0.0.1:8000/v1
+      - STT_API_KEY=local
+      - STT_MODEL=Systran/faster-whisper-base
     depends_on:
-      - opencode-web
+      opencode-web:
+        condition: service_started
+      whisper:
+        condition: service_healthy
     profiles: [telegram]
     network_mode: host
     volumes:
       - ~/.config/opencode:/root/.config/opencode
       - ~/.config/opencode-telegram-bot:/root/.config/opencode-telegram-bot
+
+volumes:
+  whisper-cache:
