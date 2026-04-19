@@ -69,6 +69,7 @@ COPY --from=installer /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=installer /usr/local/bin /usr/local/bin
 
 COPY oh-my-openagent.json /root/.config/opencode/oh-my-openagent.json
+COPY opencode.json /root/.config/opencode/opencode.json
 
 ENV PATH="/root/.opencode/bin:${PATH}"
 ENV OPENCODE_CONFIG_DIR="/root/.config/opencode"
